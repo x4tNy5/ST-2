@@ -57,7 +57,7 @@ TEST(CircleTest, SmallRadiusTest) {
 
 TEST(CircleTest, LargeRadiusTest) {
     Circle c(1e6);
-    EXPECT_GT(c.getArea(), 1e12); 
+    EXPECT_GT(c.getArea(), 1e12);
 }
 
 TEST(CircleTest, ConsistencyTest) {
@@ -77,7 +77,7 @@ TEST(RopeTask, ResultIsPositive) {
 }
 
 TEST(RopeTask, SpecificValueTest) {
-    EXPECT_NEAR(0.159, Rope(), 0.001); 
+    EXPECT_NEAR(0.159, Rope(), 0.001);
 }
 
 TEST(RopeTask, NotZeroTest) {
@@ -102,8 +102,7 @@ TEST(PoolTask, MinimumCostTest) {
 }
 
 TEST(PoolTask, PrecisionTest) {
-    double res1 = Pool(); 
+    double res1 = Pool();
     double res2 = Pool();
     EXPECT_DOUBLE_EQ(res1, res2);
 }
- 

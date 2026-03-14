@@ -28,10 +28,9 @@ void Circle::setArea(double r) {
 
 double Circle::getArea() const {
     return area;
-} 
+}
 
-double Circle::getRadius() const 
-{
+double Circle::getRadius() const {
     return radius;
 }
 
