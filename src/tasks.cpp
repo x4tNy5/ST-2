@@ -1,24 +1,30 @@
 // Copyright 2022 UNN-CS
 #include "tasks.h"
-#include <cmath>
 #include "circle.h"
 
-double Rope() {
-    double earth = 6378100.0;
-    Circle rope(earth);
-    double nFerence = rope.getFerence() + 1.0;
-    rope.setFerence(nFerence);
-    return rope.getRadius() - earth;
+double earthRopeGap() {
+    const double earthRadiusMeters = 6378.1 * 1000.0;
+    const double addedRopeLength = 1.0;
+
+    Circle equator(earthRadiusMeters);
+    const double radiusBefore = equator.getRadius();
+    equator.setFerence(equator.getFerence() + addedRopeLength);
+
+    return equator.getRadius() - radiusBefore;
 }
 
-double Pool() {
-    double rPool = 3.0;
-    double rRoad = 1.0;
+double poolMaterialsCost() {
+    const double poolRadius = 3.0;
+    const double walkwayWidth = 1.0;
+    const double concretePrice = 1000.0;
+    const double fencePrice = 2000.0;
 
-    Circle pool(rPool);
-    Circle road(rPool + rRoad);
+    Circle pool(poolRadius);
+    Circle walkwayRing(poolRadius + walkwayWidth);
 
-    double priceOgrada = road.getFerence() * 2000.0;
-    double priceDoroga = (road.getArea() - pool.getArea()) * 1000.0;
-    return priceOgrada + priceDoroga;
+    const double walkwayArea = walkwayRing.getArea() - pool.getArea();
+    const double concreteCost = walkwayArea * concretePrice;
+    const double fenceCost = walkwayRing.getFerence() * fencePrice;
+
+    return concreteCost + fenceCost;
 }

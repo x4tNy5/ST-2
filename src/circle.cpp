@@ -1,39 +1,55 @@
 // Copyright 2022 UNN-CS
 #define _USE_MATH_DEFINES
-#include <cstdint>
 #include <cmath>
 #include "circle.h"
 
-Circle::Circle(double r) {
-    setRadius(r);
+namespace {
+constexpr double kPi = M_PI;
 }
 
-void Circle::setRadius(double r) {
-    radius = r;
-    ference = 2 * M_PI * r;
-    area = M_PI * radius * radius;
+void Circle::recalcFromRadius() {
+    ference_ = 2.0 * kPi * radius_;
+    area_ = kPi * radius_ * radius_;
 }
 
-void Circle::setFerence(double r) {
-    ference = r;
-    radius = ference/(M_PI*2);
-    area = (ference*ference)/(4*M_PI);
+void Circle::recalcFromFerence() {
+    radius_ = ference_ / (2.0 * kPi);
+    area_ = (ference_ * ference_) / (4.0 * kPi);
 }
 
-void Circle::setArea(double r) {
-    area = r;
-    radius = std::sqrt(area/M_PI);
-    ference = 2 * M_PI * radius;
+void Circle::recalcFromArea() {
+    radius_ = std::sqrt(area_ / kPi);
+    ference_ = 2.0 * kPi * radius_;
 }
 
-double Circle::getArea() const {
-    return area;
+Circle::Circle(double radius) {
+    radius_ = radius;
+    recalcFromRadius();
+}
+
+void Circle::setRadius(double radius) {
+    radius_ = radius;
+    recalcFromRadius();
+}
+
+void Circle::setFerence(double ference) {
+    ference_ = ference;
+    recalcFromFerence();
+}
+
+void Circle::setArea(double area) {
+    area_ = area;
+    recalcFromArea();
 }
 
 double Circle::getRadius() const {
-    return radius;
+    return radius_;
 }
 
 double Circle::getFerence() const {
-    return ference;
+    return ference_;
+}
+
+double Circle::getArea() const {
+    return area_;
 }

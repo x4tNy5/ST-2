@@ -2,8 +2,8 @@
 #ifndef INCLUDE_TASKS_H_
 #define INCLUDE_TASKS_H_
 
-double Rope();
+double earthRopeGap();
 
-double Pool();
+double poolMaterialsCost();
 
-#endif // INCLUDE_TASKS_H_
+#endif  // INCLUDE_TASKS_H_

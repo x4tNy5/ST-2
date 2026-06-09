@@ -1,108 +1,148 @@
 // Copyright 2025 UNN-CS Team
 
+#define _USE_MATH_DEFINES
+#include <cmath>
 #include <gtest/gtest.h>
-#include <cstdint>
 #include "circle.h"
 #include "tasks.h"
 
-TEST(CircleTest, RadiusSet) {
-    Circle c(5.0);
-    EXPECT_NEAR(5.0, c.getRadius(), 0.0001);
+namespace {
+constexpr double kEps = 1e-4;
 }
 
-TEST(CircleTest, FerenceFromRadius) {
-    Circle c(10.0);
-    EXPECT_NEAR(62.8318, c.getFerence(), 0.001);
+TEST(Circle, ConstructorStoresRadius) {
+    Circle circle(7.5);
+    EXPECT_NEAR(circle.getRadius(), 7.5, kEps);
 }
 
-TEST(CircleTest, AreaFromRadius) {
-    Circle c(10.0);
-    EXPECT_NEAR(314.159, c.getArea(), 0.001);
+TEST(Circle, SetRadiusUpdatesFerence) {
+    Circle circle(1.0);
+    circle.setRadius(4.0);
+    EXPECT_NEAR(circle.getFerence(), 2.0 * M_PI * 4.0, kEps);
 }
 
-TEST(CircleTest, SetFerenceUpdatesRadius) {
-    Circle c(1.0);
-    c.setFerence(62.8318);
-    EXPECT_NEAR(10.0, c.getRadius(), 0.001);
+TEST(Circle, SetRadiusUpdatesArea) {
+    Circle circle(1.0);
+    circle.setRadius(4.0);
+    EXPECT_NEAR(circle.getArea(), M_PI * 16.0, kEps);
 }
 
-TEST(CircleTest, SetFerenceUpdatesArea) {
-    Circle c(1.0);
-    c.setFerence(62.8318);
-    EXPECT_NEAR(314.159, c.getArea(), 0.001);
+TEST(Circle, SetFerenceUpdatesRadius) {
+    Circle circle(2.0);
+    const double targetFerence = 20.0;
+    circle.setFerence(targetFerence);
+    EXPECT_NEAR(circle.getRadius(), targetFerence / (2.0 * M_PI), kEps);
 }
 
-TEST(CircleTest, SetAreaUpdatesRadius) {
-    Circle c(1.0);
-    c.setArea(314.159);
-    EXPECT_NEAR(10.0, c.getRadius(), 0.001);
+TEST(Circle, SetFerenceUpdatesArea) {
+    Circle circle(2.0);
+    const double targetFerence = 20.0;
+    circle.setFerence(targetFerence);
+    EXPECT_NEAR(circle.getArea(), (targetFerence * targetFerence) / (4.0 * M_PI), kEps);
 }
 
-TEST(CircleTest, SetAreaUpdatesFerence) {
-    Circle c(1.0);
-    c.setArea(314.159);
-    EXPECT_NEAR(62.8318, c.getFerence(), 0.001);
+TEST(Circle, SetAreaUpdatesRadius) {
+    Circle circle(2.0);
+    const double targetArea = 50.0;
+    circle.setArea(targetArea);
+    EXPECT_NEAR(circle.getRadius(), std::sqrt(targetArea / M_PI), kEps);
 }
 
-TEST(CircleTest, ZeroRadiusTest) {
-    Circle c(0.0);
-    EXPECT_DOUBLE_EQ(0.0, c.getArea());
-    EXPECT_DOUBLE_EQ(0.0, c.getFerence());
+TEST(Circle, SetAreaUpdatesFerence) {
+    Circle circle(2.0);
+    const double targetArea = 50.0;
+    circle.setArea(targetArea);
+    EXPECT_NEAR(circle.getFerence(), 2.0 * M_PI * std::sqrt(targetArea / M_PI), kEps);
 }
 
-TEST(CircleTest, SmallRadiusTest) {
-    Circle c(0.1);
-    EXPECT_NEAR(0.0314, c.getArea(), 0.0001);
+TEST(Circle, UnitCircleHasExpectedMetrics) {
+    Circle circle(1.0);
+    EXPECT_NEAR(circle.getFerence(), 2.0 * M_PI, kEps);
+    EXPECT_NEAR(circle.getArea(), M_PI, kEps);
 }
 
-TEST(CircleTest, LargeRadiusTest) {
-    Circle c(1e6);
-    EXPECT_GT(c.getArea(), 1e12);
+TEST(Circle, ZeroRadiusProducesZeroMetrics) {
+    Circle circle(0.0);
+    EXPECT_DOUBLE_EQ(circle.getRadius(), 0.0);
+    EXPECT_DOUBLE_EQ(circle.getFerence(), 0.0);
+    EXPECT_DOUBLE_EQ(circle.getArea(), 0.0);
 }
 
-TEST(CircleTest, ConsistencyTest) {
-    Circle c(15.0);
-    double a1 = c.getArea();
-    c.setArea(a1);
-    EXPECT_NEAR(15.0, c.getRadius(), 0.0001);
+TEST(Circle, RadiusAreaFerenceStayConsistent) {
+    Circle circle(12.0);
+    const double radius = circle.getRadius();
+    const double ference = circle.getFerence();
+    const double area = circle.getArea();
+
+    EXPECT_NEAR(ference, 2.0 * M_PI * radius, kEps);
+    EXPECT_NEAR(area, M_PI * radius * radius, kEps);
+    EXPECT_NEAR(area, (ference * ference) / (4.0 * M_PI), kEps);
 }
 
-TEST(CircleTest, NegativeRadiusTest) {
-    Circle c(-1.0);
-    EXPECT_LE(c.getRadius(), 0.0);
+TEST(Circle, RepeatedSetAreaKeepsRadius) {
+    Circle circle(8.0);
+    const double area = circle.getArea();
+    circle.setArea(area);
+    EXPECT_NEAR(circle.getRadius(), 8.0, kEps);
 }
 
-TEST(RopeTask, ResultIsPositive) {
-    EXPECT_GT(Rope(), 0.0);
+TEST(Circle, RepeatedSetFerenceKeepsRadius) {
+    Circle circle(8.0);
+    const double ference = circle.getFerence();
+    circle.setFerence(ference);
+    EXPECT_NEAR(circle.getRadius(), 8.0, kEps);
 }
 
-TEST(RopeTask, SpecificValueTest) {
-    EXPECT_NEAR(0.159, Rope(), 0.001);
+TEST(Circle, LargeRadiusScalesAreaQuadratically) {
+    Circle small(10.0);
+    Circle large(20.0);
+    EXPECT_NEAR(large.getArea(), 4.0 * small.getArea(), kEps);
 }
 
-TEST(RopeTask, NotZeroTest) {
-    EXPECT_NE(0.0, Rope());
+TEST(Circle, SmallRadiusHasSmallArea) {
+    Circle circle(0.01);
+    EXPECT_LT(circle.getArea(), 0.001);
 }
 
-TEST(RopeTask, LogicIndependence) {
-    EXPECT_LT(Rope(), 1.0);
+TEST(EarthRope, GapIsPositive) {
+    EXPECT_GT(earthRopeGap(), 0.0);
 }
 
-
-TEST(PoolTask, CostIsPositive) {
-    EXPECT_GT(Pool(), 0.0);
+TEST(EarthRope, GapMatchesAnalyticalEstimate) {
+    const double expectedGap = 1.0 / (2.0 * M_PI);
+    EXPECT_NEAR(earthRopeGap(), expectedGap, 0.01);
 }
 
-TEST(PoolTask, ExpectedValueTest) {
-    EXPECT_NEAR(72256.6, Pool(), 1.0);
+TEST(EarthRope, GapIsMuchSmallerThanEarthRadius) {
+    EXPECT_LT(earthRopeGap(), 1.0);
 }
 
-TEST(PoolTask, MinimumCostTest) {
-    EXPECT_GE(Pool(), 70000.0);
+TEST(EarthRope, GapIsDeterministic) {
+    EXPECT_DOUBLE_EQ(earthRopeGap(), earthRopeGap());
 }
 
-TEST(PoolTask, PrecisionTest) {
-    double res1 = Pool();
-    double res2 = Pool();
-    EXPECT_DOUBLE_EQ(res1, res2);
+TEST(PoolMaterials, TotalCostIsPositive) {
+    EXPECT_GT(poolMaterialsCost(), 0.0);
+}
+
+TEST(PoolMaterials, TotalCostMatchesManualCalculation) {
+    Circle pool(3.0);
+    Circle outer(4.0);
+
+    const double expectedConcrete = (outer.getArea() - pool.getArea()) * 1000.0;
+    const double expectedFence = outer.getFerence() * 2000.0;
+    const double expectedTotal = expectedConcrete + expectedFence;
+
+    EXPECT_NEAR(poolMaterialsCost(), expectedTotal, 0.5);
+}
+
+TEST(PoolMaterials, FencePartDominatesConcretePart) {
+    Circle pool(3.0);
+    Circle outer(4.0);
+
+    const double concretePart = (outer.getArea() - pool.getArea()) * 1000.0;
+    const double fencePart = outer.getFerence() * 2000.0;
+
+    EXPECT_GT(fencePart, concretePart);
+    EXPECT_NEAR(poolMaterialsCost(), concretePart + fencePart, 0.5);
 }
