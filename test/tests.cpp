@@ -1,12 +1,14 @@
 // Copyright 2025 UNN-CS Team
 
+#include <gtest/gtest.h>
+
 #define _USE_MATH_DEFINES
 #include <cmath>
-#include <gtest/gtest.h>
 #include "circle.h"
 #include "tasks.h"
 
 namespace {
+constexpr double kPi = 3.14159265358979323846;
 constexpr double kEps = 1e-4;
 }
 
@@ -18,47 +20,51 @@ TEST(Circle, ConstructorStoresRadius) {
 TEST(Circle, SetRadiusUpdatesFerence) {
     Circle circle(1.0);
     circle.setRadius(4.0);
-    EXPECT_NEAR(circle.getFerence(), 2.0 * M_PI * 4.0, kEps);
+    EXPECT_NEAR(circle.getFerence(), 2.0 * kPi * 4.0, kEps);
 }
 
 TEST(Circle, SetRadiusUpdatesArea) {
     Circle circle(1.0);
     circle.setRadius(4.0);
-    EXPECT_NEAR(circle.getArea(), M_PI * 16.0, kEps);
+    EXPECT_NEAR(circle.getArea(), kPi * 16.0, kEps);
 }
 
 TEST(Circle, SetFerenceUpdatesRadius) {
     Circle circle(2.0);
     const double targetFerence = 20.0;
     circle.setFerence(targetFerence);
-    EXPECT_NEAR(circle.getRadius(), targetFerence / (2.0 * M_PI), kEps);
+    EXPECT_NEAR(circle.getRadius(), targetFerence / (2.0 * kPi), kEps);
 }
 
 TEST(Circle, SetFerenceUpdatesArea) {
     Circle circle(2.0);
     const double targetFerence = 20.0;
     circle.setFerence(targetFerence);
-    EXPECT_NEAR(circle.getArea(), (targetFerence * targetFerence) / (4.0 * M_PI), kEps);
+    const double expectedArea =
+        (targetFerence * targetFerence) / (4.0 * kPi);
+    EXPECT_NEAR(circle.getArea(), expectedArea, kEps);
 }
 
 TEST(Circle, SetAreaUpdatesRadius) {
     Circle circle(2.0);
     const double targetArea = 50.0;
     circle.setArea(targetArea);
-    EXPECT_NEAR(circle.getRadius(), std::sqrt(targetArea / M_PI), kEps);
+    EXPECT_NEAR(circle.getRadius(), std::sqrt(targetArea / kPi), kEps);
 }
 
 TEST(Circle, SetAreaUpdatesFerence) {
     Circle circle(2.0);
     const double targetArea = 50.0;
     circle.setArea(targetArea);
-    EXPECT_NEAR(circle.getFerence(), 2.0 * M_PI * std::sqrt(targetArea / M_PI), kEps);
+    const double expectedRadius = std::sqrt(targetArea / kPi);
+    const double expectedFerence = 2.0 * kPi * expectedRadius;
+    EXPECT_NEAR(circle.getFerence(), expectedFerence, kEps);
 }
 
 TEST(Circle, UnitCircleHasExpectedMetrics) {
     Circle circle(1.0);
-    EXPECT_NEAR(circle.getFerence(), 2.0 * M_PI, kEps);
-    EXPECT_NEAR(circle.getArea(), M_PI, kEps);
+    EXPECT_NEAR(circle.getFerence(), 2.0 * kPi, kEps);
+    EXPECT_NEAR(circle.getArea(), kPi, kEps);
 }
 
 TEST(Circle, ZeroRadiusProducesZeroMetrics) {
@@ -74,9 +80,9 @@ TEST(Circle, RadiusAreaFerenceStayConsistent) {
     const double ference = circle.getFerence();
     const double area = circle.getArea();
 
-    EXPECT_NEAR(ference, 2.0 * M_PI * radius, kEps);
-    EXPECT_NEAR(area, M_PI * radius * radius, kEps);
-    EXPECT_NEAR(area, (ference * ference) / (4.0 * M_PI), kEps);
+    EXPECT_NEAR(ference, 2.0 * kPi * radius, kEps);
+    EXPECT_NEAR(area, kPi * radius * radius, kEps);
+    EXPECT_NEAR(area, (ference * ference) / (4.0 * kPi), kEps);
 }
 
 TEST(Circle, RepeatedSetAreaKeepsRadius) {
@@ -109,7 +115,7 @@ TEST(EarthRope, GapIsPositive) {
 }
 
 TEST(EarthRope, GapMatchesAnalyticalEstimate) {
-    const double expectedGap = 1.0 / (2.0 * M_PI);
+    const double expectedGap = 1.0 / (2.0 * kPi);
     EXPECT_NEAR(earthRopeGap(), expectedGap, 0.01);
 }
 
